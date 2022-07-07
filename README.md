@@ -1,7 +1,7 @@
 # What is this project?
 #### This project is a demonstration of ray casting. Putting it simply, there's a "light" source on the screen that is controlled by mouse. So the source follows the cursor.
 #### The source emits arbitrary (controllable) number of light beams, or rays. The rays can be blocked with walls on the scene. The walls are pre-set, but can be changed in the code.
-![Alt Text](<iframe src="https://giphy.com/embed/9HJ1FoczL5SjX2J7xi" width="480" height="270" frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a href="https://giphy.com/gifs/9HJ1FoczL5SjX2J7xi">via GIPHY</a></p>)
+![Alt Text](https://giphy.com/embed/9HJ1FoczL5SjX2J7xi)
 
 # What is different from the original?
 1. The collision detection has been reworked so it's more clear and works better.
