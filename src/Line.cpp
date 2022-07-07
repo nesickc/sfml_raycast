@@ -52,6 +52,8 @@ void Line::Draw(sf::RenderWindow& window) const
 
 void Line::UpdateAngle()
 {
+    // updating the angle between positive x axis and the line
+    // Angle is in degrees, not radians
     m_angle = atan((secondPoint.y - firstPoint.y) / (secondPoint.x - firstPoint.x)) * 180 / M_PI + 180 * (secondPoint.x < firstPoint.x); // adding 180 degrees if the second point is in II or III quarters
     m_rect.setRotation(m_angle);
 }
@@ -85,6 +87,7 @@ void Line::CalculateEndPoint()
 bool Line::Contains(const Point& point) const
 {
     static const float epsilon = 0.01;
+    // checking if the poin is inside the line's rectangle
     if ( ( point.x >= firstPoint.x  && point.x <= secondPoint.x ||
            point.x >= secondPoint.x && point.x <= firstPoint.x ) &&
          ( point.y >= firstPoint.y  && point.y <= secondPoint.y  ||
@@ -102,6 +105,7 @@ bool Line::Contains(const Point& point) const
                 return true;
             return false;
         }
+        // checking if the point is on the line
         if(abs( (point.y - firstPoint.y) / (secondPoint.y - firstPoint.y) - 
                 (point.x - firstPoint.x) / (secondPoint.x - firstPoint.x) ) < epsilon)
             return true;

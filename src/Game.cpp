@@ -4,10 +4,7 @@ Game::Game()
 {
     m_settings;
     m_settings.antialiasingLevel = 8;
-    m_window = std::make_unique<sf::RenderWindow>( sf::VideoMode( WINDOW_WIDTH, WINDOW_HEIGHT ),
-                                                   "raycast", sf::Style::Close, m_settings );
-
-    ImGui::SFML::Init( *m_window.get() );
+    InitWindow();
 }
 
 Game::~Game()
@@ -44,20 +41,19 @@ void Game::Run()
             }
         }
 
-        ImGui::SFML::Update( *m_window.get(), deltaClock.restart());
+        ImGui::SFML::Update( *m_window.get(), deltaClock.restart() );
 
-        ImGui::Begin( "Background color edit" ); // создаём окно
+        ImGui::Begin( "Background color edit" ); // create the UI window
 
-         // Инструмент выбора цвета
+        // Background color picking tool
         if ( ImGui::ColorEdit3( "Background color", bgColorArr ) )
         {
-            // код вызывается при изменении значения, поэтому всё
-            // обновляется автоматически
+            // This code is called whenever the color data has been changed
             bgColor.r = static_cast<sf::Uint8>(bgColorArr[0] * 255.f);
             bgColor.g = static_cast<sf::Uint8>(bgColorArr[1] * 255.f);
             bgColor.b = static_cast<sf::Uint8>(bgColorArr[2] * 255.f);
         }
-        // Инструмент выбора цвета
+        // Ray color picking tool
         if ( ImGui::ColorEdit3( "Beam color", beamColorArr ) )
         {
             // код вызывается при изменении значения, поэтому всё
@@ -69,6 +65,7 @@ void Game::Run()
             m_source.SetBeamColor( beamColor );
         }
 
+        // select number of beams
         int sliderValue = 0;
         if ( ImGui::SliderInt( "Beam count", &sliderValue, 0, 1080 ) )
         {
@@ -77,7 +74,7 @@ void Game::Run()
 
         ImGui::End(); // end window
 
-        m_window->clear( bgColor ); // заполняем окно заданным цветом
+        m_window->clear( bgColor ); // Fill the window with the selected color
         ImGui::SFML::Render( *m_window.get() );
 
         m_source.checkWalls( m_walls );
@@ -100,7 +97,10 @@ void Game::Redraw()
 
 void Game::InitWindow()
 {
+    m_window = std::make_unique<sf::RenderWindow>( sf::VideoMode( WINDOW_WIDTH, WINDOW_HEIGHT ),
+                                                   "raycast", sf::Style::Close, m_settings );
 
+    ImGui::SFML::Init( *m_window.get() );
 }
 
 void Game::AddWall( Point& start, Point& end )
