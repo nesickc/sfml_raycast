@@ -1,14 +1,9 @@
 #pragma once
-
-#include <SFML/Graphics.hpp>
+#include "proj_data.h"
 #include "Point.h"
 
 #define _USE_MATH_DEFINES
-
-#ifndef WINDOW_WIDTH
-#define WINDOW_WIDTH 1920
-#define WINDOW_HEIGHT 1080
-#endif 
+#define INF INT32_MAX
 
 class Line
 {
@@ -20,7 +15,13 @@ public:
     void Move(Point& destination);
     void SetLength(float len);
     void SetEndPoint(Point& point);
+    void SetColor( sf::Color& color );
     bool Contains(const Point& point) const;
+
+    Point FindIntersection( const Line& l2 ) const;
+
+    sf::Vector2f FindKBCoeffs() const;
+
     void UpdateAngle();
     virtual ~Line();
     
@@ -32,7 +33,7 @@ private:
 protected:
     int m_thickness;
     float m_angle;
-public:
+protected:
     Point firstPoint;
     Point secondPoint;
 };
