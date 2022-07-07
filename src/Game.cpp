@@ -56,8 +56,7 @@ void Game::Run()
         // Ray color picking tool
         if ( ImGui::ColorEdit3( "Beam color", beamColorArr ) )
         {
-            // код вызывается при изменении значения, поэтому всё
-            // обновляется автоматически
+            // This code is called whenever the color data has been changed
             beamColor.r = static_cast<sf::Uint8>(beamColorArr[0] * 255.f);
             beamColor.g = static_cast<sf::Uint8>(beamColorArr[1] * 255.f);
             beamColor.b = static_cast<sf::Uint8>(beamColorArr[2] * 255.f);
