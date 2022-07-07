@@ -18,6 +18,7 @@ void Beam::checkCollision(const std::vector<Wall>& walls)
     float k_beam = kbCoefs.x;
     float b_beam = kbCoefs.y;
 
+    // for every wall look for intersections.
     for (auto& wall : walls)
     {
         sf::Vector2f wallKBCoefs = wall.FindKBCoeffs();

@@ -2,6 +2,7 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
+/// basic point class with distance added
 class Point : public sf::Vector2f
 {
 public:
