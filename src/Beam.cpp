@@ -81,7 +81,7 @@ Beam::~Beam()
 
 bool Beam::Reflect( const Wall& wall )
 {
-    if ( m_reflectionDepth >= m_maxReflectionDepth )
+    if ( m_reflectionDepth > m_maxReflectionDepth )
         return false;
 
     sf::Vector2f wallDir = wall.GetDirection();

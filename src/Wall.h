@@ -13,6 +13,8 @@ public:
 
     Wall( const Point& p1, const Point& p2 );
 
+    float distanceFrom( const Point& p ) const;
+
     float GetAngle() const; 
 
     ~Wall();
