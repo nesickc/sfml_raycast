@@ -20,19 +20,23 @@ public:
     void Move(Point destination);
 
     /// ckeck beams' collisions 
-    void checkWalls(const std::vector<Wall> &walls);
+    void CheckWalls(const std::vector<Wall> &walls);
 
     /// set new number of beams
     void SetBeamCount(int count);
 
+    /// set new number of reflections for the beams
+    void SetReflectionsNumber( int number );
+
     /// sets the color for all the rays
     void SetBeamColor( sf::Color& color );
-
 private:
 
-private:
+public:
     static constexpr int DEFAULT_BEAM_COUNT = 720;
+
+private:
     Point m_point;
-    int m_beamCount;
+    int m_beamCount = 0;
     std::vector<Beam> m_beams;
 };

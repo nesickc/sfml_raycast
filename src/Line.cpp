@@ -4,8 +4,8 @@
 
 
 Line::Line(int x1, int y1, int x2, int y2, int thickness) : 
-    firstPoint(x1, y1),
-    secondPoint(x2, y2),
+    m_firstPoint(x1, y1),
+    m_secondPoint(x2, y2),
     m_thickness(thickness),
     m_rect(sf::Vector2f(sqrt(pow((x2 - x1), 2) + pow((y2 - y1), 2)), thickness))
 {
@@ -14,15 +14,15 @@ Line::Line(int x1, int y1, int x2, int y2, int thickness) :
 }
 
 Line::Line(int x1, int y1, float angle, int thickness)
-    : firstPoint(x1, y1), m_angle(angle), m_thickness(thickness),
+    : m_firstPoint(x1, y1), m_angle(angle), m_thickness(thickness),
       m_rect(sf::Vector2f(sqrt(pow(WINDOW_WIDTH, 2) + pow(WINDOW_HEIGHT, 2)), thickness))
 {
     InitRectangle(sf::Color(255, 255, 255, 50));
     CalculateEndPoint();
 }
 
-Line::Line(Point& p1, Point& p2, int thickness)
-    : firstPoint(p1), secondPoint(p2),
+Line::Line(const Point& p1, const Point& p2, int thickness)
+    : m_firstPoint(p1), m_secondPoint(p2),
     m_thickness(thickness),
     m_rect( sf::Vector2f( p1.DistanceTo(p2), thickness ) )
 {
@@ -32,16 +32,16 @@ Line::Line(Point& p1, Point& p2, int thickness)
 
 void Line::Move(Point& destination)
 {
-    secondPoint += destination - firstPoint;
-    firstPoint = destination;
-    m_rect.setPosition(firstPoint);
+    m_secondPoint += destination - m_firstPoint;
+    m_firstPoint = destination;
+    m_rect.setPosition(m_firstPoint);
 }
 
 void Line::InitRectangle(sf::Color color)
 {
     m_rect.setFillColor(color);
     m_rect.setOrigin(0, m_thickness / 2);
-    m_rect.setPosition(firstPoint.x, firstPoint.y);
+    m_rect.setPosition(m_firstPoint.x, m_firstPoint.y);
     m_rect.setRotation(m_angle);
 }
 
@@ -54,22 +54,22 @@ void Line::UpdateAngle()
 {
     // updating the angle between positive x axis and the line
     // Angle is in degrees, not radians
-    m_angle = atan((secondPoint.y - firstPoint.y) / (secondPoint.x - firstPoint.x)) * 180 / M_PI + 180 * (secondPoint.x < firstPoint.x); // adding 180 degrees if the second point is in II or III quarters
+    m_angle = atan((m_secondPoint.y - m_firstPoint.y) / (m_secondPoint.x - m_firstPoint.x)) * 180 / M_PI + 180 * (m_secondPoint.x < m_firstPoint.x); // adding 180 degrees if the second point is in II or III quarters
     m_rect.setRotation(m_angle);
 }
 
 void Line::SetLength(float length)
 {
-    secondPoint.x = firstPoint.x + cos(m_angle * RAD) * length;
-    secondPoint.y = firstPoint.y + sin(m_angle * RAD) * length;
+    m_secondPoint.x = m_firstPoint.x + cos(m_angle * RAD) * length;
+    m_secondPoint.y = m_firstPoint.y + sin(m_angle * RAD) * length;
     m_rect.setSize(sf::Vector2f(length, m_thickness));
 }
 
 void Line::SetEndPoint(Point& point)
 {
-    secondPoint = point;
+    m_secondPoint = point;
     UpdateAngle();
-    SetLength(Point::DistanceBetween(firstPoint, secondPoint));
+    SetLength(Point::DistanceBetween(m_firstPoint, m_secondPoint));
 }
 
 void Line::SetColor( sf::Color& color )
@@ -77,40 +77,52 @@ void Line::SetColor( sf::Color& color )
     m_rect.setFillColor( color );
 }
 
+sf::Color Line::GetColor() const
+{
+    return m_rect.getFillColor();
+}
+
 void Line::CalculateEndPoint()
 {
     float length = sqrt(pow(m_rect.getSize().x, 2) + pow(m_rect.getSize().y, 2));
-    secondPoint.x = firstPoint.x + cos(m_angle * RAD) * length;
-    secondPoint.y = firstPoint.y + sin(m_angle * RAD) * length;
+    m_secondPoint.x = m_firstPoint.x + cos(m_angle * RAD) * length;
+    m_secondPoint.y = m_firstPoint.y + sin(m_angle * RAD) * length;
 }
 
 bool Line::Contains(const Point& point) const
 {
     static const float epsilon = 0.01;
     // checking if the poin is inside the line's rectangle
-    if ( ( point.x >= firstPoint.x  && point.x <= secondPoint.x ||
-           point.x >= secondPoint.x && point.x <= firstPoint.x ) &&
-         ( point.y >= firstPoint.y  && point.y <= secondPoint.y  ||
-           point.y >  secondPoint.y && point.y <  firstPoint.y ) )
+    if ( ( point.x >= m_firstPoint.x  && point.x <= m_secondPoint.x ||
+           point.x >= m_secondPoint.x && point.x <= m_firstPoint.x ) &&
+         ( point.y >= m_firstPoint.y  && point.y <= m_secondPoint.y  ||
+           point.y >  m_secondPoint.y && point.y <  m_firstPoint.y ) )
     {
-        if ( secondPoint.y == firstPoint.y )
+        if ( m_secondPoint.y == m_firstPoint.y )
         {
-            if (point.y == secondPoint.y)
+            if (point.y == m_secondPoint.y)
                 return true;
             return false;
         }
-        if ( secondPoint.x == firstPoint.x )
+        if ( m_secondPoint.x == m_firstPoint.x )
         {
-            if (point.x == secondPoint.x)
+            if (point.x == m_secondPoint.x)
                 return true;
             return false;
         }
         // checking if the point is on the line
-        if(abs( (point.y - firstPoint.y) / (secondPoint.y - firstPoint.y) - 
-                (point.x - firstPoint.x) / (secondPoint.x - firstPoint.x) ) < epsilon)
+        if(abs( (point.y - m_firstPoint.y) / (m_secondPoint.y - m_firstPoint.y) - 
+                (point.x - m_firstPoint.x) / (m_secondPoint.x - m_firstPoint.x) ) < epsilon)
             return true;
     }
     return false;
+}
+
+sf::Vector2f Line::GetDirection() const
+{
+    auto vec = m_secondPoint - m_firstPoint;
+    auto length = sqrt( vec.x * vec.x + vec.y * vec.y );
+    return vec / length;
 }
 
 Point Line::FindIntersection( const Line& l2 ) const
@@ -146,7 +158,7 @@ Point Line::FindIntersection( const Line& l2 ) const
     {
         if ( k2 == INF )
         {
-            intercept.x = l2.firstPoint.x;
+            intercept.x = l2.m_firstPoint.x;
             intercept.y = k1 * intercept.x + b1;
         }
         else
@@ -157,7 +169,7 @@ Point Line::FindIntersection( const Line& l2 ) const
     }
     else
     {
-        intercept.x = firstPoint.x;
+        intercept.x = m_firstPoint.x;
         intercept.y = k2 * intercept.x + b2;
     }
 
@@ -168,7 +180,7 @@ sf::Vector2f Line::FindKBCoeffs() const
 {
     float k = 0;
     float b = 0;
-    if ( (secondPoint.x - firstPoint.x) == 0 ) // if the line is vertical set k to be inf
+    if ( (m_secondPoint.x - m_firstPoint.x) == 0 ) // if the line is vertical set k to be inf
     {
         k = INF;
         b = -INF;
@@ -184,8 +196,8 @@ sf::Vector2f Line::FindKBCoeffs() const
         // expand: y = x(y1-y2)/(x1-x2) - x1(y1-y2)/(x1-x2) + y1
         // equation is y = kx+b therefore k = (y1-y2)/(x1-x2); b = y1 - x1(y1-y2)/(x1-x2).
 
-        k = (secondPoint.y - firstPoint.y) / (secondPoint.x - firstPoint.x);
-        b = firstPoint.y - k * firstPoint.x;
+        k = (m_secondPoint.y - m_firstPoint.y) / (m_secondPoint.x - m_firstPoint.x);
+        b = m_firstPoint.y - k * m_firstPoint.x;
     }
     return sf::Vector2f(k, b);
 }

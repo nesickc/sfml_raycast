@@ -15,6 +15,8 @@ public:
         return sqrt(pow(first.x - second.x, 2) + pow(first.y - second.y, 2));
     }
     Point(float x_, float y_) : sf::Vector2f(x_, y_){}
+
+    Point( const sf::Vector2i& vec  ) : sf::Vector2f( vec.x, vec.y ) { }
     Point()
     {
         x = 0; y = 0;

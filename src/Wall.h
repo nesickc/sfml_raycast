@@ -11,7 +11,7 @@ private:
 public:
     Wall( int x1, int y1, int x2, int y2 );
 
-    Wall( Point& p1, Point& p2 );
+    Wall( const Point& p1, const Point& p2 );
 
     float GetAngle() const; 
 

@@ -17,9 +17,9 @@ void Game::Run()
     sf::Clock deltaClock;
 
     sf::Color bgColor;
-    float bgColorArr[3] = { 0.f, 0.f, 0.f };
+    static float bgColorArr[3] = { 0.f, 0.f, 0.f };
     sf::Color beamColor;
-    float beamColorArr[3] = { 0.f, 0.f, 0.f };
+    static float beamColorArr[3] = { 0.f, 0.f, 0.f };
 
     char windowTitle[255] = "raycast";
     m_window->setTitle( windowTitle );
@@ -36,8 +36,8 @@ void Game::Run()
             }
             if ( Event.type == sf::Event::MouseMoved )
             {
-                m_source.Move( { (float)sf::Mouse::getPosition( *m_window.get() ).x,
-                          (float)sf::Mouse::getPosition( *m_window.get() ).y } );
+                Point newPosition = sf::Mouse::getPosition( *m_window.get() );
+                m_source.Move( newPosition );
             }
         }
 
@@ -65,10 +65,17 @@ void Game::Run()
         }
 
         // select number of beams
-        int sliderValue = 0;
-        if ( ImGui::SliderInt( "Beam count", &sliderValue, 0, 1080 ) )
+        static int beamCountSliderValue = Source::DEFAULT_BEAM_COUNT;
+        if ( ImGui::SliderInt( "Beam count", &beamCountSliderValue, 0, 1080 ) )
         {
-            m_source.SetBeamCount( sliderValue );
+            m_source.SetBeamCount( beamCountSliderValue );
+        }
+
+        // select number of reflections
+        static int reflectionsSliderValue = 0;
+        if ( ImGui::SliderInt( "Reflections depth", &reflectionsSliderValue, 0, 10 ) )
+        {
+            m_source.SetReflectionsNumber( reflectionsSliderValue );
         }
 
         ImGui::End(); // end window
@@ -76,7 +83,7 @@ void Game::Run()
         m_window->clear( bgColor ); // Fill the window with the selected color
         ImGui::SFML::Render( *m_window.get() );
 
-        m_source.checkWalls( m_walls );
+        m_source.CheckWalls( m_walls );
         Redraw();
     }
 }
