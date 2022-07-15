@@ -8,11 +8,11 @@ Wall::Wall( const Point& p1, const Point& p2 ) : Line( p1, p2, m_thickness ) { }
 
 float Wall::distanceFrom( const Point& p ) const
 {
-    sf::Vector2f wallDir = GetDirection();
-    sf::Vector2f wallNormal = sf::Vector2f( wallDir.y, -wallDir.x );
-    sf::Vector2f a = p - m_firstPoint;
-    float dot = a.x * wallNormal.x + a.y * wallNormal.y;
-    Point m = { p.x - wallNormal.x * dot, p.y - wallNormal.y * dot };
+    glm::vec2 wallDir = GetDirection();
+    glm::vec2 wallNormal = glm::normalize( glm::vec2{ wallDir.y, -wallDir.x } );
+    glm::vec2 a = p - m_firstPoint;
+    float dot = glm::dot( a, wallNormal );
+    Point m{ p - wallNormal * dot };
     return m.DistanceTo(p);
 }
 

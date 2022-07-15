@@ -3,11 +3,11 @@
 #define RAD M_PI / 180.0
 
 
-Line::Line(int x1, int y1, int x2, int y2, int thickness) : 
-    m_firstPoint(x1, y1),
-    m_secondPoint(x2, y2),
-    m_thickness(thickness),
-    m_rect(sf::Vector2f(sqrt(pow((x2 - x1), 2) + pow((y2 - y1), 2)), thickness))
+Line::Line( int x1, int y1, int x2, int y2, int thickness ) :
+    m_firstPoint( x1, y1 ),
+    m_secondPoint( x2, y2 ),
+    m_thickness( thickness ),
+    m_rect( sf::Vector2f( glm::distance( glm::vec2{ x1, y1 }, glm::vec2{ x2, y2 } ), thickness ) )
 {
     UpdateAngle();
     InitRectangle(sf::Color(255, 255, 255, 250));
@@ -30,11 +30,11 @@ Line::Line(const Point& p1, const Point& p2, int thickness)
     InitRectangle(sf::Color::White);
 }
 
-void Line::Move(Point& destination)
+void Line::Move( const Point& destination)
 {
     m_secondPoint += destination - m_firstPoint;
     m_firstPoint = destination;
-    m_rect.setPosition(m_firstPoint);
+    m_rect.setPosition( m_firstPoint.x, m_firstPoint.y );
 }
 
 void Line::InitRectangle(sf::Color color)
@@ -65,14 +65,14 @@ void Line::SetLength(float length)
     m_rect.setSize(sf::Vector2f(length, m_thickness));
 }
 
-void Line::SetEndPoint(Point& point)
+void Line::SetEndPoint( const Point& point)
 {
     m_secondPoint = point;
     UpdateAngle();
     SetLength(Point::DistanceBetween(m_firstPoint, m_secondPoint));
 }
 
-void Line::SetColor( sf::Color& color )
+void Line::SetColor( const sf::Color& color )
 {
     m_rect.setFillColor( color );
 }
@@ -118,24 +118,23 @@ bool Line::Contains(const Point& point) const
     return false;
 }
 
-sf::Vector2f Line::GetDirection() const
+glm::vec2 Line::GetDirection() const
 {
     auto vec = m_secondPoint - m_firstPoint;
-    auto length = sqrt( vec.x * vec.x + vec.y * vec.y );
-    return vec / length;
+    return vec / glm::length(vec);
 }
 
 Point Line::FindIntersection( const Line& l2 ) const
 {
     Point intercept( INF, INF );
 
-    sf::Vector2f kbThis = FindKBCoeffs();
-    float k1 = kbThis.x;
-    float b1 = kbThis.y;
+    KBCoefficients kbThis = FindKBCoeffs();
+    float k1 = kbThis.k;
+    float b1 = kbThis.b;
 
-    sf::Vector2f kbOther = l2.FindKBCoeffs();
-    float k2 = kbOther.x;
-    float b2 = kbOther.y;
+    KBCoefficients kbOther = l2.FindKBCoeffs();
+    float k2 = kbOther.k;
+    float b2 = kbOther.b;
 
     // point of interception is found as the solution of the system
     // {y = k1 * x + b1
@@ -176,7 +175,7 @@ Point Line::FindIntersection( const Line& l2 ) const
     return intercept;
 }
 
-sf::Vector2f Line::FindKBCoeffs() const
+Line::KBCoefficients Line::FindKBCoeffs() const
 {
     float k = 0;
     float b = 0;
@@ -199,7 +198,7 @@ sf::Vector2f Line::FindKBCoeffs() const
         k = (m_secondPoint.y - m_firstPoint.y) / (m_secondPoint.x - m_firstPoint.x);
         b = m_firstPoint.y - k * m_firstPoint.x;
     }
-    return sf::Vector2f(k, b);
+    return Line::KBCoefficients{ k, b };
 }
 
 

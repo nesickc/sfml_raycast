@@ -10,13 +10,17 @@ class Beam : public Line
 public:
     Beam(int x, int y, float angle, int reflectionDepth = 1);
 
+    Beam( const Point& point, float angle, int reflectionDepth = 1 );
+
+    Beam( const Point& point, const glm::vec2& direction, int reflectionDepth = 1 );
+
     void CheckCollision(const std::vector<Wall>& walls);
 
     uint32_t ReflectionDepth();
 
     void Draw( sf::RenderWindow& window ) const override;
 
-    void Move( Point& destination ) override;
+    void Move( const Point& destination ) override;
 
     static void SetMaxReflectionDepth( uint32_t newDepth );
 
@@ -29,7 +33,7 @@ private:
 
 private:
     std::shared_ptr<Beam> m_reflectedBeam = nullptr;
-    const Wall* m_wallToIgnore;
+    const Wall* m_wallToIgnore = nullptr;
     int m_reflectionDepth;
     static int m_maxReflectionDepth;
 };

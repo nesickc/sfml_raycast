@@ -1,24 +1,24 @@
 #pragma once
 #define _USE_MATH_DEFINES
 #include <math.h>
+#include <glm/glm.hpp>
 
 /// basic point class with distance added
-class Point : public sf::Vector2f
+class Point : public glm::vec2
 {
 public:
     inline float DistanceTo(const Point& other) const
     {
-        return sqrt(pow(x - other.x, 2) + pow(y - other.y, 2));
+        return glm::length(*this - other);
     }
     inline static float DistanceBetween(const Point& first, const Point& second)
     {      
-        return sqrt(pow(first.x - second.x, 2) + pow(first.y - second.y, 2));
+        return glm::length( first - second );
     }
-    Point(float x_, float y_) : sf::Vector2f(x_, y_){}
+    Point(float x_, float y_) : glm::vec2(x_, y_) { }
 
-    Point( const sf::Vector2i& vec  ) : sf::Vector2f( vec.x, vec.y ) { }
-    Point()
-    {
-        x = 0; y = 0;
-    }
+    Point( const sf::Vector2i& vec  ) : glm::vec2( vec.x, vec.y ) { }
+    Point( const glm::vec2& vec ) : glm::vec2( vec ) { }
+
+    Point() : glm::vec2(0, 0) { }
 };

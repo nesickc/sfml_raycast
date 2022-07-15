@@ -40,7 +40,7 @@ void Source::SetBeamCount( int count )
     m_beams.reserve( m_beamCount );
     for ( int i = 0; i < m_beamCount; ++i )
     {
-        m_beams.emplace_back( m_point.x, m_point.y, (360.f / m_beamCount) * i );
+        m_beams.emplace_back( m_point, (360.f / m_beamCount) * i );
     }
 }
 

@@ -8,21 +8,28 @@
 class Line
 {
 public:
+    struct KBCoefficients
+    {
+        float k;
+        float b;
+    };
+
+public:
     Line( int x1, int y1, int x2, int y2, int thickness );
     Line( int x1, int y1, float angle, int thickness );
     Line( const Point& p1, const Point& p2, int thickness );
     virtual void Draw( sf::RenderWindow& window ) const;
-    virtual void Move( Point& destination );
+    virtual void Move( const Point& destination );
     void SetLength( float len );
-    void SetEndPoint( Point& point );
-    void SetColor( sf::Color& color );
+    void SetEndPoint( const Point& point );
+    void SetColor( const sf::Color& color );
     sf::Color GetColor() const;
     bool Contains( const Point& point ) const;
-    sf::Vector2f GetDirection() const;
+    glm::vec2 GetDirection() const;
 
     Point FindIntersection( const Line& l2 ) const;
 
-    sf::Vector2f FindKBCoeffs() const;
+    KBCoefficients FindKBCoeffs() const;
 
     void UpdateAngle();
     virtual ~Line();
